@@ -28,16 +28,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+   
   ];
 
   return (
@@ -54,21 +45,6 @@ export default function App() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="/">
-            Inicio
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/teams">
-            Equipos
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/matches">
-            Resultados
-          </Link>
-        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
