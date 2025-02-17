@@ -1,4 +1,4 @@
-import React , { useState } from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -10,9 +10,8 @@ import {
   Link,
   Button,
 } from "@heroui/react";
-import { MoonIcon, SunIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "next-themes";
-
 
 export const AcmeLogo = () => {
   return (
@@ -28,7 +27,7 @@ export const AcmeLogo = () => {
 };
 
 export default function App() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const [isDark, setIsDark] = useState(theme === "dark");
 
@@ -38,12 +37,10 @@ export default function App() {
     setIsDark(!isDark);
   };
 
-  const menuItems = [
-   
-  ];
+  const menuItems = [];
 
   return (
-    <Navbar className="ms-0 bg-white/80 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+    <Navbar className="ms-0 bg-background text-foreground border-b border-primary-500 shadow-md">
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -51,40 +48,33 @@ export default function App() {
         />
         <NavbarBrand>
           <AcmeLogo />
-          <p className="font-bold text-inherit">Futbol UY</p>
+          <p className="font-bold text-primary-500">Futbol UY</p>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-      </NavbarContent>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center" />
+
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
+          <Button
+            className="ms-auto"
+            variant="outline"
+            onPress={toggleTheme}
+          >
+            {isDark ? (
+              <SunIcon className="h-6 w-6 text-yellow-400" />
+            ) : (
+              <MoonIcon className="h-6 w-6 text-primary-500" />
+            )}
           </Button>
         </NavbarItem>
-        <NavbarItem><div className="mb-2 flex">
-        <Button className="ms-auto" variant="outline" onPress={toggleTheme}>
-          {isDark ? (
-            <SunIcon className="h-6 w-6" color="primary" variant="shadow" />
-          ) : (
-            <MoonIcon className="h-6 w-6" color="primary" variant="light" />
-          )}
-        </Button>
-      </div>
-      </NavbarItem>
       </NavbarContent>
-      <NavbarMenu>
+
+      <NavbarMenu className="bg-background text-foreground">
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
-              className="w-full"
-              color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
-              }
+              className="w-full text-primary-500 hover:text-primary-700"
               href="#"
               size="lg"
             >
@@ -96,4 +86,3 @@ export default function App() {
     </Navbar>
   );
 }
-

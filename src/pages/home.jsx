@@ -16,7 +16,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-football-green via-football-blue to-football-red">
+    <div className="min-h-screen bg-backround">
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <AdSpace position="top" />

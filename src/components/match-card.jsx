@@ -18,15 +18,17 @@ const MatchCard = ({ match, teams }) => {
   });
 
   return (
-    <div className="bg-white shadow-md rounded-xl p-4 flex flex-col items-center w-64 border-l-4 border-gray-500">
+    <div className="bg-background/80 shadow-lg rounded-xl p-4 flex flex-col items-center w-64 border-l-4 border-primary-500 backdrop-blur-md">
       <div className="flex justify-between items-center w-full mt-2">
         {/* Equipo Local */}
         <div className="flex flex-col items-center w-1/3">
           <img src={teams.home.logo} alt={teams.home.name} className="w-10 h-10" />
-          <span className="text-sm font-medium text-gray-700 text-center">{teams.home.name}</span>
+          <span className="text-sm font-medium text-foreground text-center">
+            {teams.home.name}
+          </span>
           <span
             className={`text-lg ${
-              homeScore > awayScore ? "font-bold text-black" : "text-gray-600"
+              homeScore > awayScore ? "font-bold text-primary-500" : "text-gray-400"
             }`}
           >
             {homeScore}
@@ -34,15 +36,17 @@ const MatchCard = ({ match, teams }) => {
         </div>
 
         {/* Marcador en el centro */}
-        <span className="text-lg font-bold text-gray-800">-</span>
+        <span className="text-lg font-bold text-foreground">-</span>
 
         {/* Equipo Visitante */}
         <div className="flex flex-col items-center w-1/3">
           <img src={teams.away.logo} alt={teams.away.name} className="w-10 h-10" />
-          <span className="text-sm font-medium text-gray-700 text-center">{teams.away.name}</span>
+          <span className="text-sm font-medium text-foreground text-center">
+            {teams.away.name}
+          </span>
           <span
             className={`text-lg ${
-              awayScore > homeScore ? "font-bold text-black" : "text-gray-600"
+              awayScore > homeScore ? "font-bold text-primary-500" : "text-gray-400"
             }`}
           >
             {awayScore}
@@ -50,7 +54,7 @@ const MatchCard = ({ match, teams }) => {
         </div>
       </div>
 
-      {/* Fecha del partido en formato corto */}
+      {/* Fecha del partido */}
       <p className="text-xs text-gray-500 mt-2">
         {formattedDate} - {formattedTime}
       </p>

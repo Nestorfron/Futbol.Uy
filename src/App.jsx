@@ -10,7 +10,7 @@ import Navbar from "./components/navbar.jsx";
 function App({ Component, pageProps }) {
   return (
     <NextUIProvider>
-      <NextThemesProvider attribute="class" defaultTheme="dark">
+      <NextThemesProvider attribute="class" defaultTheme="light">
         <BrowserRouter {...pageProps}>
           <Navbar />
           <Routes>
