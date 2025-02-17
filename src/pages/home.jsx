@@ -49,9 +49,9 @@ function Home() {
               </h1>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                 {store.upcomingMatches.length > 0 ? (
-                  store.upcomingMatches.map((match) => (
+                  store.upcomingMatches.map((match, index) => (
                     <MatchCard
-                      key={match.id}
+                      key={index + 1}
                       match={match}
                       teams={match.teams}
                     />
@@ -71,9 +71,9 @@ function Home() {
               </h1>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                 {store.pastMatches.length > 0 ? (
-                  store.pastMatches.map((match) => (
+                  store.pastMatches.map((match, index) => (
                     <MatchCard
-                      key={match.id}
+                      key={index + 1}
                       match={match}
                       teams={match.teams}
                     />
@@ -94,8 +94,8 @@ function Home() {
             </h1>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
               {store.teams.length > 0 ? (
-                store.teams.map((team) => (
-                  <TeamCard key={team.id} team={team.team} />
+                store.teams.map((team , index) => (
+                  <TeamCard key={index + 1} team={team.team} />
                 ))
               ) : (
                 <p className="text-gray-500 text-center col-span-full">

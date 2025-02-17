@@ -1,4 +1,4 @@
-import React from "react";
+import React , { useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -10,6 +10,9 @@ import {
   Link,
   Button,
 } from "@heroui/react";
+import { MoonIcon, SunIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useTheme } from "next-themes";
+
 
 export const AcmeLogo = () => {
   return (
@@ -26,6 +29,14 @@ export const AcmeLogo = () => {
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { theme, setTheme } = useTheme();
+  const [isDark, setIsDark] = useState(theme === "dark");
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? "light" : "dark";
+    setTheme(newTheme);
+    setIsDark(!isDark);
+  };
 
   const menuItems = [
    
@@ -55,6 +66,16 @@ export default function App() {
             Sign Up
           </Button>
         </NavbarItem>
+        <NavbarItem><div className="mb-2 flex">
+        <Button className="ms-auto" variant="outline" onPress={toggleTheme}>
+          {isDark ? (
+            <SunIcon className="h-6 w-6" color="primary" variant="shadow" />
+          ) : (
+            <MoonIcon className="h-6 w-6" color="primary" variant="light" />
+          )}
+        </Button>
+      </div>
+      </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (
