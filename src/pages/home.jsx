@@ -1,55 +1,77 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Context } from "../store/appContext.jsx";
-import { useTheme } from "next-themes";
-import { Button } from "@nextui-org/react";
+import AdSpace from "../components/ad-space.jsx";
+import LiveMatchCard from "../components/live-matches.jsx";
+import TeamCard from "../components/team-card.jsx";
+import MatchCard from "../components/match-card.jsx";
 
 function Home() {
   const { store, actions } = useContext(Context);
-  const { theme, setTheme } = useTheme();
-  const [id, setId] = useState(0);
-
-  const createItem = async (item) => {
-    const response = await actions.createItem(item);
-    console.log(response);
-    actions.getItems();
-  };
-
-  const deleteItem = async (item_id) => {
-    const response = await actions.deleteItem(item_id);
-    console.log(response);
-    actions.getItems();
-  };
 
   useEffect(() => {
-    actions.getItems();
+    actions.getMatches();
+    actions.getUpcomingMatches();
   }, []);
 
   return (
-    <div>
-      <div>
-        The current theme is: {theme}
-        <Button color="primary" onClick={() => setTheme("light")}>
-          Light Mode
-        </Button>
-        <Button color="primary" onClick={() => setTheme("dark")}>
-          Dark Mode
-        </Button>
+    <div className="flex flex-col gap-6">
+      {/* Espacio Publicitario Superior */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <AdSpace position="top" />
       </div>
-      <h1>{store.saludo}</h1>
-      <button onClick={() => createItem({ name: "Hola" })}>Create</button>
-      <select
-        onChange={(e) => {
-          setId(e.target.value);
-        }}
-      >
-        {store.items.length > 0 &&
-          store.items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-      </select>
-      <button onClick={() => deleteItem(id)}>Delete</button>
+
+      {/* Partidos en Vivo */}
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-xl font-bold text-center mb-4">Partidos en Vivo</h1>
+        <div className="flex flex-wrap gap-4 justify-center">
+          {store.matches.length > 0 ? (
+            store.matches.map((match) => (
+              <LiveMatchCard key={match.fixture.id} match={match} />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center w-full">
+              No hay partidos en vivo en este momento.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Próximos partidos */}
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-xl font-bold text-center mb-4">Próximos partidos</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {store.upcomingMatches.length > 0 ? (
+            store.upcomingMatches.map((match, index) => (
+              <MatchCard key={index + 1} match={match} teams={match.teams} />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center col-span-full">
+              Cargando partidos...
+            </p>
+          )}
+        </div>
+      </div> 
+
+      {/* Tabla de Posiciones */}
+      <div className="max-w-4xl mx-auto p-4">
+        <h1 className="text-xl font-bold text-center mb-4">Tabla de Posiciones</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {store.standings.length > 0 ? (
+            store.standings.map((standing, index) => (
+              <StandingCard key={index + 1} standing={standing} rank={index + 1} />
+            ))
+          ) : (
+            <p className="text-gray-500 text-center col-span-full">
+              Cargando estadísticas...
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Espacio Publicitario Inferior */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <AdSpace position="bottom" />
+      </div>
     </div>
   );
 }
