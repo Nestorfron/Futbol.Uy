@@ -121,10 +121,11 @@ const getState = ({ getStore, getActions, setStore }) => {
             }
           );
 
-          if (!response.ok) throw new Error("Error al obtener los equipos");
+          if (!response.ok) throw new Error("Error al obtener estadisticas de los equipos");
 
           const data = await response.json();
-          setStore({ standings: data.response });
+          setStore({ standings: data.response[0].league.standings[0]});
+          console.log(data.response[0].league.standings[0]);
         } catch (error) {
           console.error("Error en getStandings:", error);
         }

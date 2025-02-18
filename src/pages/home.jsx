@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../store/appContext.jsx";
 import AdSpace from "../components/ad-space.jsx";
 import LiveMatchCard from "../components/live-matches.jsx";
@@ -13,21 +13,21 @@ function Home() {
     actions.getUpcomingMatches();
     actions.getPastMatches();
     actions.getTeams();
+    actions.getStandings();
   }, []);
 
   return (
     <div className="min-h-screen bg-backround">
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 py-8">
         <div className="mb-8">
           <AdSpace position="top" />
         </div>
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-8 lg:space-y-0">
-
             {/* Partidos en Vivo */}
             <div className="max-w-4xl mx-auto p-4">
               <h1 className="text-2xl font-bold text-center mb-4">
-                Partidos en Vivo
+                Resultados en Vivo
               </h1>
               <div className="flex flex-wrap gap-6 justify-center">
                 {store.matches.length > 0 ? (
@@ -43,18 +43,14 @@ function Home() {
             </div>
 
             {/* Próximos partidos */}
-            <div className="max-w-4xl mx-auto p-4">
+            <div className="max-w-4xl mx-auto p-4 mt-8">
               <h1 className="text-2xl font-bold text-center mb-4">
-                Próximos partidos
+                Próximos encuentros
               </h1>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                 {store.upcomingMatches.length > 0 ? (
                   store.upcomingMatches.map((match, index) => (
-                    <MatchCard
-                      key={index + 1}
-                      match={match}
-                      teams={match.teams}
-                    />
+                    <MatchCard key={index} match={match} teams={match.teams} />
                   ))
                 ) : (
                   <p className="text-gray-500 text-center col-span-full">
@@ -67,16 +63,12 @@ function Home() {
             {/* Partidos Finalizados */}
             <div className="max-w-4xl mx-auto p-4">
               <h1 className="text-2xl font-bold text-center mb-4">
-                Resultados
+                Resultados anterioes
               </h1>
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                 {store.pastMatches.length > 0 ? (
                   store.pastMatches.map((match, index) => (
-                    <MatchCard
-                      key={index + 1}
-                      match={match}
-                      teams={match.teams}
-                    />
+                    <MatchCard key={index} match={match} teams={match.teams} />
                   ))
                 ) : (
                   <p className="text-gray-500 text-center col-span-full">
@@ -86,22 +78,93 @@ function Home() {
               </div>
             </div>
           </div>
-
-          {/* Equipos de la Temporada */}
-          <div className="max-w-md mx-auto p-8 mt-8 lg:mt-0">
-            <h1 className="text-2xl font-bold text-center mb-4">
-              Equipos de la Temporada
-            </h1>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-              {store.teams.length > 0 ? (
-                store.teams.map((team , index) => (
-                  <TeamCard key={index + 1} team={team.team} />
-                ))
-              ) : (
-                <p className="text-gray-500 text-center col-span-full">
-                  Cargando equipos...
-                </p>
-              )}
+             {/* Equipos de la Temporada */}
+          <div className="mt-8">
+            {/* Equipos de la Temporada */}
+            <div className="max-w-lg mx-auto p-8 mt-8 lg:mt-0">
+              <h1 className="text-2xl font-bold text-center mb-8">
+                Equipos de la Temporada
+              </h1>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                {store.teams.length > 0 ? (
+                  store.teams.map((team, index) => (
+                    <TeamCard key={index} team={team.team} />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center col-span-full">
+                    Cargando equipos...
+                  </p>
+                )}
+              </div>
+              {/* Estadisticas*/}
+              <div className="mx-auto mt-8">
+                <h1 className="text-2xl font-bold text-center mb-8">
+                  Tabla de Posiciones
+                </h1>
+                {store.standings.length > 0 ? (
+                  <div className="overflow-x-auto bg-background rounded-lg shadow-xl border-t-4 border-primary-500">
+                    <table className="w-full text-center border-collapse">
+                      <thead>
+                        <tr className="bg-background/80">
+                          <th className="px-6 py-3 text-md">Pos</th>
+                          <th className="px-6 py-3 text-md">Equipo</th>
+                          <th className="px-6 py-3 text-md">Jugados</th>
+                          <th className="px-6 py-3 text-md">Ganados</th>
+                          <th className="px-6 py-3 text-md">Empatados</th>
+                          <th className="px-6 py-3 text-md">Perdidos</th>
+                          <th className="px-6 py-3 text-md">Dif. Goles</th>
+                          <th className="px-6 py-3 text-md">Pts</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {store.standings.map((standing, index) => (
+                          <tr
+                            key={index}
+                            className={`${
+                              index % 2 === 0
+                                ? "bg-background/10"
+                                : "bg-background/80"
+                            } transition-transform`}
+                          >
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.rank}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600 font-medium">
+                              <img
+                                src={standing.team?.logo}
+                                alt="Bandera del equipo"
+                                className="w-6 h-6 m-auto"
+                              />
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.home.played + standing.away.played}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.home.win + standing.away.win}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.home.draw + standing.away.draw}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.home.lose + standing.away.lose}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.goalsDiff}
+                            </td>
+                            <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                              {standing.points}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-center">
+                    Cargando estadísticas...
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
