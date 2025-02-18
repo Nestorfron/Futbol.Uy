@@ -132,32 +132,32 @@ function Home() {
                               : "bg-background/80"
                           } transition-transform`}
                         >
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.rank}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600 font-medium">
+                          <td className="px-6 py-3 border border-primary rounded-lg font-medium">
                             <img
                               src={standing.team?.logo}
                               alt="Bandera del equipo"
                               className="w-6 h-6 m-auto"
                             />
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.home.played + standing.away.played}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.home.win + standing.away.win}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.home.draw + standing.away.draw}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.home.lose + standing.away.lose}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.goalsDiff}
                           </td>
-                          <td className="px-6 py-3 border border-gray-700 dark:border-gray-600">
+                          <td className="px-6 py-3 border border-primary rounded-lg">
                             {standing.points}
                           </td>
                         </tr>
