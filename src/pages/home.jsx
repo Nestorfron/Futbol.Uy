@@ -18,9 +18,9 @@ function Home() {
 
   const groupMatchesByRound = (matches) => {
     return matches.reduce((acc, match) => {
-      const roundParts = match.league.round.split(" - "); // Divide "APERTURA - 2" en ["APERTURA", "2"]
+      const roundParts = match.league.round.split(" - ");
       if (roundParts.length === 2) {
-        const formattedRound = `Fecha - ${roundParts[1]} ${roundParts[0]}`; // "APERTURA Fecha - 2"
+        const formattedRound = `${roundParts[0]} - Fecha ${roundParts[1]} `;
 
         if (!acc[formattedRound]) {
           acc[formattedRound] = [];
@@ -34,6 +34,13 @@ function Home() {
 
   const groupedPastMatches = groupMatchesByRound(store.pastMatches);
   const groupedUpcomingMatches = groupMatchesByRound(store.upcomingMatches);
+
+  const reversedGroupedPastMatches = Object.entries(groupedPastMatches)
+    .reverse()
+    .reduce((acc, [round, matches]) => {
+      acc[round] = matches;
+      return acc;
+    }, {});
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,23 +108,25 @@ function Home() {
                 Resultados anteriores
               </h1>
 
-              {Object.entries(groupedPastMatches).length > 0 ? (
-                Object.entries(groupedPastMatches).map(([round, matches]) => (
-                  <div key={round} className="mb-6">
-                    <h2 className="text-xl font-semibold text-center mb-2">
-                      {round}
-                    </h2>
-                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-                      {matches.map((match, index) => (
-                        <MatchCard
-                          key={index}
-                          match={match}
-                          teams={match.teams}
-                        />
-                      ))}
+              {Object.entries(reversedGroupedPastMatches).length > 0 ? (
+                Object.entries(reversedGroupedPastMatches).map(
+                  ([round, matches]) => (
+                    <div key={round} className="mb-6">
+                      <h2 className="text-xl font-semibold text-center mb-2">
+                        {round}
+                      </h2>
+                      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                        {matches.map((match, index) => (
+                          <MatchCard
+                            key={index}
+                            match={match}
+                            teams={match.teams}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))
+                  )
+                )
               ) : (
                 <p className="text-gray-500 text-center">
                   Cargando partidos...

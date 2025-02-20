@@ -47,7 +47,7 @@ export default function App() {
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
+          className="hidden"
         />
         <NavbarBrand>
           <AcmeLogo />
