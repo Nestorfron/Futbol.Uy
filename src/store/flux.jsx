@@ -125,7 +125,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
           const data = await response.json();
           setStore({ standings: data.response[0].league.standings[0]});
-          console.log(data.response[0].league.standings[0]);
         } catch (error) {
           console.error("Error en getStandings:", error);
         }

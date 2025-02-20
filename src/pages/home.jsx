@@ -16,6 +16,25 @@ function Home() {
     actions.getStandings();
   }, []);
 
+  const groupMatchesByRound = (matches) => {
+    return matches.reduce((acc, match) => {
+      const roundParts = match.league.round.split(" - "); // Divide "APERTURA - 2" en ["APERTURA", "2"]
+      if (roundParts.length === 2) {
+        const formattedRound = `Fecha ${roundParts[1]} - ${roundParts[0]}`; // "APERTURA Fecha - 2"
+
+        if (!acc[formattedRound]) {
+          acc[formattedRound] = [];
+        }
+
+        acc[formattedRound].push(match);
+      }
+      return acc;
+    }, {});
+  };
+
+  const groupedPastMatches = groupMatchesByRound(store.pastMatches);
+  const groupedUpcomingMatches = groupMatchesByRound(store.upcomingMatches);
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-2 py-8">
@@ -49,17 +68,31 @@ function Home() {
               <h1 className="text-2xl font-bold text-center mb-4">
                 Próximos encuentros
               </h1>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-                {store.upcomingMatches.length > 0 ? (
-                  store.upcomingMatches.map((match, index) => (
-                    <MatchCard key={index} match={match} teams={match.teams} />
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center col-span-full">
-                    Cargando partidos...
-                  </p>
-                )}
-              </div>
+
+              {Object.entries(groupedUpcomingMatches).length > 0 ? (
+                Object.entries(groupedUpcomingMatches).map(
+                  ([round, matches]) => (
+                    <div key={round} className="mb-6">
+                      <h2 className="text-xl font-semibold text-center mb-2">
+                        {round}
+                      </h2>
+                      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                        {matches.map((match, index) => (
+                          <MatchCard
+                            key={index}
+                            match={match}
+                            teams={match.teams}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )
+              ) : (
+                <p className="text-gray-500 text-center">
+                  Cargando partidos...
+                </p>
+              )}
             </div>
 
             {/* Partidos Finalizados */}
@@ -67,23 +100,34 @@ function Home() {
               <h1 className="text-2xl font-bold text-center mb-4">
                 Resultados anteriores
               </h1>
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
-                {store.pastMatches.length > 0 ? (
-                  store.pastMatches.map((match, index) => (
-                    <MatchCard key={index} match={match} teams={match.teams} />
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center col-span-full">
-                    Cargando partidos...
-                  </p>
-                )}
-              </div>
+
+              {Object.entries(groupedPastMatches).length > 0 ? (
+                Object.entries(groupedPastMatches).map(([round, matches]) => (
+                  <div key={round} className="mb-6">
+                    <h2 className="text-xl font-semibold text-center mb-2">
+                      {round}
+                    </h2>
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                      {matches.map((match, index) => (
+                        <MatchCard
+                          key={index}
+                          match={match}
+                          teams={match.teams}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center">
+                  Cargando partidos...
+                </p>
+              )}
             </div>
           </div>
 
           {/* Barra lateral */}
           <div className="lg:col-span-1 text-xs mt-8 lg:mt-0 space-y-8">
-
             {/* Equipos de la Temporada */}
             <div className="max-w-lg mx-auto p-8">
               <h1 className="text-2xl font-bold text-center mb-8">
