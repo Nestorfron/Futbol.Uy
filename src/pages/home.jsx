@@ -20,7 +20,7 @@ function Home() {
     return matches.reduce((acc, match) => {
       const roundParts = match.league.round.split(" - "); // Divide "APERTURA - 2" en ["APERTURA", "2"]
       if (roundParts.length === 2) {
-        const formattedRound = `Fecha ${roundParts[1]} - ${roundParts[0]}`; // "APERTURA Fecha - 2"
+        const formattedRound = `Fecha - ${roundParts[1]} ${roundParts[0]}`; // "APERTURA Fecha - 2"
 
         if (!acc[formattedRound]) {
           acc[formattedRound] = [];
