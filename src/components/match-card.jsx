@@ -23,7 +23,7 @@ const MatchCard = ({ match, teams }) => {
         {/* Equipo Local */}
         <div className="flex flex-col items-center w-1/3">
           <img src={teams.home.logo} alt={teams.home.name} className="w-10 h-10" />
-          <span className="text-sm font-medium text-foreground text-center">
+          <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
             {teams.home.name}
           </span>
           <span
@@ -41,7 +41,7 @@ const MatchCard = ({ match, teams }) => {
         {/* Equipo Visitante */}
         <div className="flex flex-col items-center w-1/3">
           <img src={teams.away.logo} alt={teams.away.name} className="w-10 h-10" />
-          <span className="text-sm font-medium text-foreground text-center">
+          <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
             {teams.away.name}
           </span>
           <span
@@ -55,7 +55,7 @@ const MatchCard = ({ match, teams }) => {
       </div>
 
       {/* Fecha del partido */}
-      <p className="text-xs text-gray-500 mt-2">
+      <p className="text-xs text-gray-500 mt-2 text-center">
         {formattedDate} - {formattedTime}
       </p>
     </div>
