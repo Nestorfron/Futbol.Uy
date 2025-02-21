@@ -45,7 +45,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-2 py-8">
-        <div className="mb-8">
+        <div className="mb-8 hidden">
           <AdSpace position="top" />
         </div>
 
@@ -227,7 +227,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-8 hidden">
           <AdSpace position="bottom" />
         </div>
       </main>
