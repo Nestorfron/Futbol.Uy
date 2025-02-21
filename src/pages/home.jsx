@@ -1,5 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { Context } from "../store/appContext.jsx";
+import { Spinner } from "@heroui/react";
+import StandingsWidget from "../components/standing-widget.jsx";
 import AdSpace from "../components/ad-space.jsx";
 import LiveMatchCard from "../components/live-matches.jsx";
 import TeamCard from "../components/team-card.jsx";
@@ -96,9 +98,9 @@ function Home() {
                   )
                 )
               ) : (
-                <p className="text-gray-500 text-center">
-                  Cargando partidos...
-                </p>
+                <div className="text-gray-500 text-center">
+                  <Spinner size="lg" />
+                </div>
               )}
             </div>
 
@@ -128,9 +130,9 @@ function Home() {
                   )
                 )
               ) : (
-                <p className="text-gray-500 text-center">
-                  Cargando partidos...
-                </p>
+                <div className="text-gray-500 text-center">
+                  <Spinner size="lg" />
+                </div>
               )}
             </div>
           </div>
@@ -148,9 +150,9 @@ function Home() {
                     <TeamCard key={index} team={team.team} />
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center col-span-full">
-                    Cargando equipos...
-                  </p>
+                  <div className="text-gray-500 text-center">
+                    <Spinner size="lg" />
+                  </div>
                 )}
               </div>
             </div>
@@ -219,9 +221,9 @@ function Home() {
                   </table>
                 </div>
               ) : (
-                <p className="text-gray-400 text-center">
-                  Cargando estadísticas...
-                </p>
+                <div className="text-gray-500 text-center">
+                  <Spinner size="lg" />
+                </div>
               )}
             </div>
           </div>
