@@ -15,7 +15,6 @@ const LiveMatchCard = ({ match }) => {
         {/* Resultado en Vivo */}
         <div className="text-center">
           <span className="text-2xl font-bold text-red-500">{match.goals.home} - {match.goals.away}</span>
-          <p className="text-xs text-gray-600">Min {match.fixture.status.elapsed}</p>
         </div>
 
         {/* Equipo Visitante */}

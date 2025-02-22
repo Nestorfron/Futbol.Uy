@@ -16,6 +16,14 @@ function Home() {
     actions.getPastMatches();
     actions.getTeams();
     actions.getStandings();
+  
+    const interval = setInterval(() => {
+      if (store.matches.length > 0) {
+        actions.getMatches();
+      }
+    }, 60000); // 60000 ms = 1 minuto
+  
+    return () => clearInterval(interval); 
   }, []);
 
   const groupMatchesByRound = (matches) => {
@@ -144,7 +152,7 @@ function Home() {
               <h1 className="text-2xl font-bold text-center mb-8">
                 Equipos de la Temporada
               </h1>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+              <div className={store.teams.length > 0 ? ("grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6") : ("text-center")}> 
                 {store.teams.length > 0 ? (
                   store.teams.map((team, index) => (
                     <TeamCard key={index} team={team.team} />
