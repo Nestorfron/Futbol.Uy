@@ -136,7 +136,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         const API_KEY = import.meta.env.VITE_API_KEY2;
         const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/form_standings.json?api_key=${API_KEY}`;
 
-        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
+        const PROXY_URL = "https://corsproxy.io/?";
+
 
         try {
           const response = await fetch(PROXY_URL + URL, {
@@ -155,7 +156,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       getPlayers: async () => {
         const API_KEY = import.meta.env.VITE_API_KEY2;
         const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/lineups.json?api_key=${API_KEY}`;
-        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
+        const PROXY_URL = "https://corsproxy.io/?";
+
 
         try {
           const response = await fetch(PROXY_URL + URL, {
