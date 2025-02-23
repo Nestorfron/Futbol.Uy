@@ -5,6 +5,7 @@ const MatchCard = ({ match, teams }) => {
   const awayScore = match.goals.away;
 
   const venue = match.fixture.venue.name;
+  const matchStatus = match.fixture.status.short; // Estado del partido
 
   // Formatear la fecha del partido
   const matchDate = new Date(match.fixture.date);
@@ -67,10 +68,14 @@ const MatchCard = ({ match, teams }) => {
           </span>
         </div>
       </div>
-      {/* Estadio del partido */}
-      <p className="text-xs text-gray-500 mt-2 text-center">
-        <span className="font-bold">{venue}</span>
-      </p>
+
+      {/* Estadio del partido (se muestra solo si el partido NO ha finalizado) */}
+      {matchStatus !== "FT" && matchStatus !== "PST" && (
+        <p className="text-xs mt-2 text-center">
+          {venue}
+        </p>
+      )}
+
       {/* Fecha del partido */}
       <p className="text-xs text-gray-500 mt-2 text-center">
         {formattedDate} - {formattedTime}
