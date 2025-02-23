@@ -30,7 +30,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
           const data = await response.json();
           setStore({ teams: data.response });
-          console.log(data.response);
         } catch (error) {
           console.error("Error en getTeams:", error);
         }
@@ -137,7 +136,7 @@ const getState = ({ getStore, getActions, setStore }) => {
         const API_KEY = import.meta.env.VITE_API_KEY2;
         const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/form_standings.json?api_key=${API_KEY}`;
 
-        const PROXY_URL = "https://cors-anywhere.herokuapp.com/"; // Proxy para evitar CORS
+        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
 
         try {
           const response = await fetch(PROXY_URL + URL, {
@@ -149,9 +148,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 
           const data = await response.json();
           setStore({ standings2: data.season_form_standings[0].groups[0].form_standings });
-          console.log(data.season_form_standings[0].groups[0].form_standings);
         } catch (error) {
           console.error("Error en getStandingsTable:", error);
+        }
+      },
+      getPlayers: async () => {
+        const API_KEY = import.meta.env.VITE_API_KEY2;
+        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/lineups.json?api_key=${API_KEY}`;
+        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
+
+        try {
+          const response = await fetch(PROXY_URL + URL, {
+            headers: {
+              accept: "application/json",
+            },
+          });
+          if (!response.ok)
+            throw new Error("Error al obtener los jugadores");
+
+          const data = await response.json();
+          console.log(data.lineups);
+        } catch (error) {
+          console.error("Error en getPlayers:", error);
         }
       },
     },
@@ -160,6 +178,4 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 export default getState;
 
-// https://v3.football.api-sports.io/teams/statistics?league=268&season=2023&team=2348
 
-//GET : https://v3.football.api-sports.io/venues?country=Uruguay estadios
