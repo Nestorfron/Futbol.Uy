@@ -2,7 +2,7 @@ import React from "react";
 
 const TeamCard = ({ team }) => {
   return (
-    <div className="bg-background/80 shadow-lg rounded-2xl p-4 flex flex-col items-center border-t-4 border-primary-500 transition-transform transform hover:scale-105 hover:shadow-xl backdrop-blur-md">
+    <div className="box bg-background/80 rounded-2xl p-4 flex flex-col items-center border-t-4 border-primary-500 transition-transform transform hover:scale-105 hover:shadow-xl backdrop-blur-md">
       <img 
         src={team.logo} 
         alt={team.name} 

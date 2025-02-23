@@ -19,7 +19,7 @@ export default function StandingsTable() {
   }, []);
 
   return (
-    <div className="overflow-x-auto bg-background rounded-lg shadow-xl border-t-4 border-primary-500">
+    <div className="box overflow-x-auto bg-background rounded-lg border-t-4 border-primary-500">
       <table className="w-full text-center border-collapse">
         <thead>
           <tr className="bg-background/80">

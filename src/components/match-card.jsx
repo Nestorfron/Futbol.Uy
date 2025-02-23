@@ -18,7 +18,7 @@ const MatchCard = ({ match, teams }) => {
   });
 
   return (
-    <div className="bg-background/80 shadow-lg rounded-xl p-4 flex flex-col items-center w-64 border-l-4 border-primary-500 backdrop-blur-md">
+    <div className="box bg-background/80 rounded-xl p-4 flex flex-col items-center w-64 border-l-4 border-primary-500 backdrop-blur-md">
       <div className="flex justify-between items-center w-full mt-2">
         {/* Equipo Local */}
         <div className="flex flex-col items-center w-1/3">
