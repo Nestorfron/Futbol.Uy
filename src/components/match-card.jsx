@@ -4,6 +4,8 @@ const MatchCard = ({ match, teams }) => {
   const homeScore = match.goals.home;
   const awayScore = match.goals.away;
 
+  const venue = match.fixture.venue.name;
+
   // Formatear la fecha del partido
   const matchDate = new Date(match.fixture.date);
   const formattedDate = matchDate.toLocaleDateString("es-ES", {
@@ -22,13 +24,19 @@ const MatchCard = ({ match, teams }) => {
       <div className="flex justify-between items-center w-full mt-2">
         {/* Equipo Local */}
         <div className="flex flex-col items-center w-1/3">
-          <img src={teams.home.logo} alt={teams.home.name} className="w-10 h-10" />
+          <img
+            src={teams.home.logo}
+            alt={teams.home.name}
+            className="w-10 h-10"
+          />
           <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
             {teams.home.name}
           </span>
           <span
             className={`text-lg ${
-              homeScore > awayScore ? "font-bold text-primary-500" : "text-gray-400"
+              homeScore > awayScore
+                ? "font-bold text-primary-500"
+                : "text-gray-400"
             }`}
           >
             {homeScore}
@@ -40,20 +48,29 @@ const MatchCard = ({ match, teams }) => {
 
         {/* Equipo Visitante */}
         <div className="flex flex-col items-center w-1/3">
-          <img src={teams.away.logo} alt={teams.away.name} className="w-10 h-10" />
+          <img
+            src={teams.away.logo}
+            alt={teams.away.name}
+            className="w-10 h-10"
+          />
           <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
             {teams.away.name}
           </span>
           <span
             className={`text-lg ${
-              awayScore > homeScore ? "font-bold text-primary-500" : "text-gray-400"
+              awayScore > homeScore
+                ? "font-bold text-primary-500"
+                : "text-gray-400"
             }`}
           >
             {awayScore}
           </span>
         </div>
       </div>
-
+      {/* Estadio del partido */}
+      <p className="text-xs text-gray-500 mt-2 text-center">
+        <span className="font-bold">{venue}</span>
+      </p>
       {/* Fecha del partido */}
       <p className="text-xs text-gray-500 mt-2 text-center">
         {formattedDate} - {formattedTime}
