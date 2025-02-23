@@ -11,6 +11,31 @@ const LiveMatchCard = ({ match }) => {
     away: awayScore,
   });
 
+  const statusTranslation = {
+    TBD: "Por definir",
+    NS: "No iniciado",
+    "1H": "1T", // Primer tiempo
+    HT: "Descanso",
+    "2H": "2T", // Segundo tiempo
+    ET: "Tiempo extra",
+    P: "Penales",
+    FT: "Finalizado",
+    AET: "Finalizado en tiempo extra",
+    PEN: "Finalizado en penales",
+    BT: "Entre tiempos",
+    SUSP: "Suspendido",
+    INT: "Interrumpido",
+    PST: "Aplazado",
+    CANC: "Cancelado",
+    ABD: "Abandonado",
+    AWD: "Victoria automática",
+    WO: "Victoria por ausencia",
+  };
+
+  const isOngoing = ["1H", "2H", "ET", "P"].includes(
+    match.fixture.status.short
+  );
+
   const [goalScored, setGoalScored] = useState(null);
 
   useEffect(() => {
@@ -50,11 +75,13 @@ const LiveMatchCard = ({ match }) => {
                 ¡GOOOL!
               </h1>
             </motion.div>
-            <Confetti className="absolute top-0 left-0 w-full h-full" numberOfPieces={150} />
+            <Confetti
+              className="absolute top-0 left-0 w-full h-full"
+              numberOfPieces={150}
+            />
           </>
         )}
       </AnimatePresence>
-
       <div className="flex justify-between w-full items-center mt-4">
         {/* Equipo Local */}
         <div className="flex flex-col items-center flex-1">
@@ -99,11 +126,10 @@ const LiveMatchCard = ({ match }) => {
           </span>
         </div>
       </div>
-
       {/* Estado del partido con animación */}
       <p className="mt-2 text-xs text-white bg-red-500 px-2 py-1 rounded-md animate-pulse">
-        ⚽ {match.fixture.status.short === "1H" ? "1T" : "2T"} -{" "}
-        <span className="font-bold">{match.fixture.status.elapsed}’</span>
+        ⚽ {statusTranslation[match.fixture.status.short] || "Desconocido"}
+        {isOngoing && ` - ${match.fixture.status.elapsed}’`}
       </p>
     </div>
   );
