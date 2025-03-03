@@ -3,10 +3,10 @@ import TeamLogo from "../components/team-logo.jsx";
 
 function Leaders({ leaders }) {
   return (
-    <div className="max-w-lg mx-auto p-4">
-      <div className="max-h-96 overflow-y-auto">
+    <div className="max-w-lg mx-auto rounded-lg shadow-xl border-t-4 border-primary-500 px-2 pb-2">
+      <div className="max-h-96 overflow-y-auto space-y-2">
         {" "}
-        <ul className="space-y-2">
+        <ul className="space-y-2 pt-2">
           {leaders.map((leader) =>
             leader.players.map((player) => {
               // Obtener cantidad de goles

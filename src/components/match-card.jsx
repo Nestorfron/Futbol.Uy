@@ -1,43 +1,32 @@
 import React from "react";
+import TeamLogo from "./team-logo";
 
-const MatchCard = ({ match, teams }) => {
-  const homeScore = match.goals.home;
-  const awayScore = match.goals.away;
+function MatchCard({ match }) {
 
-  const venue = match.fixture.venue.name;
-  const matchStatus = match.fixture.status.short; // Estado del partido
+  const homeTeam = match.sport_event.competitors[0];
+  const awayTeam = match.sport_event.competitors[1];
 
-  // Formatear la fecha del partido
-  const matchDate = new Date(match.fixture.date);
-  const formattedDate = matchDate.toLocaleDateString("es-ES", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-  const formattedTime = matchDate.toLocaleTimeString("es-ES", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  const homeScore = match.sport_event_status?.home_score;
+  const awayScore = match.sport_event_status?.away_score;
+
+  const formattedStartTime = new Date(match.sport_event.start_time).toLocaleString();
 
   return (
-    <div className="box bg-background/80 rounded-xl p-4 flex flex-col items-center w-64 border-l-4 border-primary-500 backdrop-blur-md">
-      <div className="flex justify-between items-center w-full mt-2">
+    <div className="box bg-background/80 rounded-xl p-4 flex flex-col items-center w-64 h-72 border-l-4 border-primary-500 backdrop-blur-md">
+    
+    
+      <div className="match-info flex justify-between items-center w-full my-4 flex-grow">
         {/* Equipo Local */}
-        <div className="flex flex-col items-center w-1/3">
-          <img
-            src={teams.home.logo}
-            alt={teams.home.name}
-            className="w-10 h-10"
-          />
-          <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
-            {teams.home.name}
-          </span>
+        <div className="team-info flex flex-col items-center w-1/3">
+          <TeamLogo teamId={homeTeam.id} />
+          <div className="team-name flex items-center justify-center h-14 mb-2">
+            <p className="text-sm font-medium text-foreground text-center">
+              {homeTeam?.name}
+            </p>
+          </div>
           <span
-            className={`text-lg ${
-              homeScore > awayScore
-                ? "font-bold text-primary-500"
-                : "text-gray-400"
+            className={`text-xl font-bold ${
+              homeScore > awayScore ? "text-primary-500" : "text-gray-400"
             }`}
           >
             {homeScore}
@@ -48,20 +37,16 @@ const MatchCard = ({ match, teams }) => {
         <span className="text-lg font-bold text-foreground">-</span>
 
         {/* Equipo Visitante */}
-        <div className="flex flex-col items-center w-1/3">
-          <img
-            src={teams.away.logo}
-            alt={teams.away.name}
-            className="w-10 h-10"
-          />
-          <span className="text-sm font-medium text-foreground text-center h-12 flex items-center justify-center">
-            {teams.away.name}
-          </span>
+        <div className="team-info flex flex-col items-center w-1/3">
+          <TeamLogo teamId={awayTeam.id} />
+          <div className="team-name flex items-center justify-center h-14 mb-2">
+            <p className="text-sm font-medium text-foreground text-center">
+              {awayTeam?.name}
+            </p>
+          </div>
           <span
-            className={`text-lg ${
-              awayScore > homeScore
-                ? "font-bold text-primary-500"
-                : "text-gray-400"
+            className={`text-xl font-bold ${
+              awayScore > homeScore ? "text-primary-500" : "text-gray-400"
             }`}
           >
             {awayScore}
@@ -69,19 +54,17 @@ const MatchCard = ({ match, teams }) => {
         </div>
       </div>
 
-      {/* Estadio del partido (se muestra solo si el partido NO ha finalizado) */}
-      {matchStatus !== "FT" && matchStatus !== "PST" && (
-        <p className="text-xs mt-2 text-center">
-          {venue}
-        </p>
-      )}
+      {/* Estadio del partido */}
+      <div className="match-venue text-xs text-gray-400 text-center text-bold">
+        {match.sport_event_status.status != "closed" ? match.sport_event.venue.name : ""}
+      </div>
 
-      {/* Fecha del partido */}
-      <p className="text-xs text-gray-500 mt-2 text-center">
-        {formattedDate} - {formattedTime}
-      </p>
+      {/* Fecha de inicio */}
+      <div className="match-time text-xs text-gray-500 text-center text-bold">
+        {formattedStartTime}
+      </div>
     </div>
   );
-};
+}
 
 export default MatchCard;

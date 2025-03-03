@@ -6,16 +6,14 @@ import LiveMatchCard from "../components/live-matches.jsx";
 import TeamCard from "../components/team-card.jsx";
 import MatchCard from "../components/match-card.jsx";
 import StandingsTable from "../components/standings-table.jsx";
-import Leaders from "../components/leaders.jsx"; 
+import Leaders from "../components/leaders.jsx";
 
 function Home() {
   const { store, actions } = useContext(Context);
 
   useEffect(() => {
     actions.getMatches();
-    actions.getUpcomingMatches();
-    actions.getPastMatches();
-    actions.getFinishedMatches();
+    actions.getAllMatches();
     actions.getTeams();
     actions.getStandingsTable();
     actions.getLeaders();
@@ -31,8 +29,7 @@ function Home() {
 
   const groupMatchesByRound = (matches) => {
     return matches.reduce((acc, match) => {
-      // Asegurarse de que 'round' esté presente en el objeto match
-      const roundNumber = match.sport_event_context?.round?.number;
+      const roundNumber = match.sport_event?.sport_event_context?.round?.number;
       if (roundNumber) {
         const formattedRound = `Fecha ${roundNumber}`;
         if (!acc[formattedRound]) {
@@ -44,19 +41,8 @@ function Home() {
     }, {});
   };
 
-  // Agrupación de partidos
-  const groupedPastMatches = groupMatchesByRound(store.pastMatches);
-  const groupedUpcomingMatches = groupMatchesByRound(store.upcomingMatches);
-  const groupedFinishedMatches = groupMatchesByRound(store.finishedMatches); // Grupo de partidos finalizados
-
-  // Reversión de la agrupación de partidos
-  const reversedGroupedPastMatches = Object.entries(groupedPastMatches)
-    .reverse()
-    .reduce((acc, [round, matches]) => {
-      acc[round] = matches;
-      return acc;
-    }, {});
-
+  const groupedUpcomingMatches = groupMatchesByRound(store.upcomingMatches || []);
+  const groupedFinishedMatches = groupMatchesByRound(store.finishedMatches || []);
   const reversedGroupedFinishedMatches = Object.entries(groupedFinishedMatches)
     .reverse()
     .reduce((acc, [round, matches]) => {
@@ -72,7 +58,7 @@ function Home() {
         </div>
 
         {/* Grid principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-8">
             {/* Partidos en Vivo */}
             <div className="max-w-4xl mx-auto p-4">
@@ -80,7 +66,7 @@ function Home() {
                 Resultados en Vivo
               </h1>
               <div className="flex flex-wrap gap-6 justify-center">
-                {store.matches.length > 0 ? (
+                {store.matches?.length > 0 ? (
                   store.matches.map((match) => (
                     <LiveMatchCard key={match.fixture.id} match={match} />
                   ))
@@ -97,7 +83,6 @@ function Home() {
               <h1 className="text-2xl font-bold text-center mb-4">
                 Próximos encuentros
               </h1>
-
               {Object.entries(groupedUpcomingMatches).length > 0 ? (
                 Object.entries(groupedUpcomingMatches).map(
                   ([round, matches]) => (
@@ -107,28 +92,24 @@ function Home() {
                       </h2>
                       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                         {matches.map((match, index) => (
-                          <MatchCard
-                            key={index}
-                            match={match}
-                            teams={match.teams}
-                          />
+                          <MatchCard key={index} match={match} />
                         ))}
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-gray-500 text-center">
-                    <Spinner size="lg" />
-                  </div>
-                )}
+                  )
+                )
+              ) : (
+                <div className="text-gray-500 text-center">
+                  <Spinner size="lg" />
+                </div>
+              )}
             </div>
 
             {/* Partidos Finalizados */}
-            <div className="max-w-4xl mx-auto p-4">
+            <div className="max-w-4xl mx-auto p-4 mt-8">
               <h1 className="text-2xl font-bold text-center mb-4">
                 Resultados anteriores
               </h1>
-
               {Object.entries(reversedGroupedFinishedMatches).length > 0 ? (
                 Object.entries(reversedGroupedFinishedMatches).map(
                   ([round, matches]) => (
@@ -138,11 +119,7 @@ function Home() {
                       </h2>
                       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
                         {matches.map((match, index) => (
-                          <MatchCard
-                            key={index}
-                            match={match}
-                            teams={match.teams}
-                          />
+                          <MatchCard key={index} match={match} />
                         ))}
                       </div>
                     </div>
@@ -159,17 +136,18 @@ function Home() {
           {/* Barra lateral */}
           <div className="lg:col-span-1 text-xs mt-8 lg:mt-0 space-y-8">
             {/* Equipos de la Temporada */}
-            <div className="max-w-lg mx-auto p-8">
+            <div className="max-w-md mx-auto p-8">
               <h1 className="text-2xl font-bold text-center mb-8">
                 Equipos de la Temporada
               </h1>
               <div
-                className={store.teams.length > 0
-                  ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
-                  : "text-center"
+                className={
+                  store.teams?.length > 0
+                    ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
+                    : "text-center"
                 }
               >
-                {store.teams.length > 0 ? (
+                {store.teams?.length > 0 ? (
                   store.teams.map((team, index) => (
                     <TeamCard key={index} team={team} />
                   ))
@@ -186,7 +164,7 @@ function Home() {
               <h1 className="text-2xl font-bold text-center mb-8">
                 Tabla de Posiciones
               </h1>
-              {store.standings2.length > 0 ? (
+              {store.standings2?.length > 0 ? (
                 <StandingsTable />
               ) : (
                 <div className="text-gray-500 text-center">
@@ -197,8 +175,10 @@ function Home() {
 
             {/* Líderes */}
             <div className="max-w-lg mx-auto mt-8 p-2">
-              <h1 className="text-2xl font-bold text-center mb-8">Goleadores</h1>
-              {store.leaders.length > 0 ? (
+              <h1 className="text-2xl font-bold text-center mb-8">
+                Goleadores
+              </h1>
+              {store.leaders?.length > 0 ? (
                 <Leaders leaders={store.leaders} />
               ) : (
                 <div className="text-gray-500 text-center">
