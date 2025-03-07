@@ -60,7 +60,7 @@ function Home() {
         </div>
 
         {/* Grid principal */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-8">
             {/* Partidos en Vivo en Uruguay */}
             <div className="max-w-4xl mx-auto p-4">
@@ -92,7 +92,7 @@ function Home() {
                       <h2 className="text-xl font-semibold text-center mb-2">
                         {round}
                       </h2>
-                      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                      <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
                         {matches.map((match, index) => (
                           <MatchCard key={index} match={match} />
                         ))}
@@ -119,7 +119,7 @@ function Home() {
                       <h2 className="text-xl font-semibold text-center mb-2">
                         {round}
                       </h2>
-                      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+                      <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
                         {matches.map((match, index) => (
                           <MatchCard key={index} match={match} />
                         ))}
@@ -136,7 +136,7 @@ function Home() {
           </div>
 
           {/* Barra lateral */}
-          <div className="lg:col-span-1 text-xs mt-8 lg:mt-0 space-y-8">
+          <div className="lg:col-span-1 text-xs mt-8 lg:mt-0 space-y-8 lg:space-y-0">
             {/* Equipos de la Temporada */}
             <div className="max-w-md mx-auto p-8">
               <h1 className="text-2xl font-bold text-center mb-8">
@@ -145,7 +145,7 @@ function Home() {
               <div
                 className={
                   store.teams?.length > 0
-                    ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
+                    ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-6"
                     : "text-center"
                 }
               >
