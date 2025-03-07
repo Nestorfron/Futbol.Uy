@@ -1,40 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
+import TeamLogo from "../components/team-logo.jsx";
 
 const LiveMatchCard = ({ match }) => {
-  const homeScore = match.goals.home;
-  const awayScore = match.goals.away;
+    
+  // Extraer los datos necesarios del objeto match
+  const homeTeam = match.sport_event.competitors[0].name;
+  const awayTeam = match.sport_event.competitors[1].name;
+
+  const homeScore = match.sport_event_status.home_score;
+  const awayScore = match.sport_event_status.away_score;
 
   const [lastScores, setLastScores] = useState({
     home: homeScore,
     away: awayScore,
   });
 
-  const statusTranslation = {
-    TBD: "Por definir",
-    NS: "No iniciado",
-    "1H": "1T", // Primer tiempo
-    HT: "Descanso",
-    "2H": "2T", // Segundo tiempo
-    ET: "Tiempo extra",
-    P: "Penales",
-    FT: "Finalizado",
-    AET: "Finalizado en tiempo extra",
-    PEN: "Finalizado en penales",
-    BT: "Entre tiempos",
-    SUSP: "Suspendido",
-    INT: "Interrumpido",
-    PST: "Aplazado",
-    CANC: "Cancelado",
-    ABD: "Abandonado",
-    AWD: "Victoria automática",
-    WO: "Victoria por ausencia",
-  };
-
-  const isOngoing = ["1H", "2H", "ET", "P"].includes(
-    match.fixture.status.short
-  );
+  const isOngoing = ["live"].includes(match.sport_event_status.status);
 
   const [goalScored, setGoalScored] = useState(null);
 
@@ -57,6 +40,8 @@ const LiveMatchCard = ({ match }) => {
       return () => clearTimeout(timer);
     }
   }, [goalScored]);
+
+  const minutesPlayed = match.sport_event_status.clock.played.split(":")[0];
 
   return (
     <div className="relative box bg-background/50 rounded-xl p-4 flex flex-col items-center w-80 border-l-4 border-green-500">
@@ -82,17 +67,12 @@ const LiveMatchCard = ({ match }) => {
           </>
         )}
       </AnimatePresence>
+
       <div className="flex justify-between w-full items-center mt-4">
         {/* Equipo Local */}
         <div className="flex flex-col items-center flex-1">
-          <img
-            src={match.teams.home.logo}
-            alt={match.teams.home.name}
-            className="w-12 h-12 mb-1"
-          />
-          <span className="font-semibold text-foreground text-center">
-            {match.teams.home.name}
-          </span>
+          <TeamLogo teamId={match.sport_event.competitors[0].id} />
+          <span className="font-semibold text-foreground text-center">{homeTeam}</span>
         </div>
 
         {/* Resultado en Vivo */}
@@ -116,20 +96,15 @@ const LiveMatchCard = ({ match }) => {
 
         {/* Equipo Visitante */}
         <div className="flex flex-col items-center flex-1">
-          <img
-            src={match.teams.away.logo}
-            alt={match.teams.away.name}
-            className="w-12 h-12 mb-1"
-          />
-          <span className="font-semibold text-foreground text-center">
-            {match.teams.away.name}
-          </span>
+          <TeamLogo teamId={match.sport_event.competitors[1].id} />
+          <span className="font-semibold text-foreground text-center">{awayTeam}</span>
         </div>
       </div>
-      {/* Estado del partido con animación */}
+
+      {/* Estado del partido */}
       <p className="mt-2 text-xs text-white bg-red-500 px-2 py-1 rounded-md animate-pulse">
-        ⚽ {statusTranslation[match.fixture.status.short] || "Desconocido"}
-        {isOngoing && ` - ${match.fixture.status.elapsed}’`}
+        ⚽ {minutesPlayed}’
+        {isOngoing && ` - ${match.sport_event_status.status === "live" ? "En Vivo" : ""}`}
       </p>
     </div>
   );
