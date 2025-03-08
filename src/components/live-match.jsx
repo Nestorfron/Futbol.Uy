@@ -109,7 +109,7 @@ const LiveMatchCard = ({ match }) => {
 
       {/* Estado del partido */}
       <p className="mt-2 text-xs text-white bg-red-500 px-2 py-1 rounded-md animate-pulse">
-        {isOngoing && `${match.sport_event_status.match_status === "halftime" ? "Medio tiempo" : "⚽ " + minutesPlayed + "’ " + matchStatus }`}
+        {isOngoing && `${match.sport_event_status.match_status === "halftime" ? "Medio tiempo" : "⚽ " + minutesPlayed + "’ -" + matchStatus }`}
         </p>
 
       {/* Estadio del partido */}
