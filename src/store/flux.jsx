@@ -9,13 +9,14 @@ const getState = ({ getStore, getActions, setStore }) => {
       leaders: [],
       teamProfile: [],
       API_KEY: import.meta.env.VITE_API_KEY2,
+      API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
       PROXY_URL: "https://corsproxy.io/?",
+      SEASSON_ID: "sr:season:128225",
     },
     actions: {
       getTeams: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/competitors.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/competitors.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
@@ -31,9 +32,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getTeamProfile: async (teamId) => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/competitors/${teamId}/profile.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}competitors/${teamId}/profile.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
@@ -50,9 +50,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getAllMatches: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/summaries.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/summaries.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
@@ -89,10 +88,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getStandingsTable: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/form_standings.json?api_key=${store.API_KEY}`;
-
-
+        const store = getStore();
+        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/form_standings.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: { accept: "application/json" },
@@ -110,9 +107,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getPlayers: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/lineups.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/lineups.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
@@ -128,9 +124,8 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getLeaders: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/seasons/sr%3Aseason%3A128225/leaders.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/leaders.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
@@ -146,26 +141,21 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
       getLiveMatchesInUruguay: async () => {
-        const store = getStore()
-        const URL = `https://api.sportradar.com/soccer/trial/v4/en/schedules/live/schedules.json?api_key=${store.API_KEY}`;
-
+        const store = getStore();
+        const URL = `${store.API_URL}schedules/live/schedules.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
             headers: {
               accept: "application/json",
             },
           });
-
           if (!response.ok) {
             throw new Error("Error al obtener los partidos");
           }
-
           const data = await response.json();
-
           if (!data.schedules || !Array.isArray(data.schedules)) {
             throw new Error("No se encontraron partidos en vivo.");
           }
-
           const partidosEnUruguay = data.schedules.filter((partido) => {
             const categoria = partido.sport_event.sport_event_context?.category;
             const status = partido.sport_event_status?.status;
@@ -178,11 +168,9 @@ const getState = ({ getStore, getActions, setStore }) => {
               seasonIdFromResponse === "sr:season:128225"
             );
           });
-
           if (partidosEnUruguay.length === 0) {
-            throw new Error("No se encontraron partidos en vivo en Uruguay.");
+            setStore({ liveMatches: [] });
           }
-
           setStore({ liveMatches: partidosEnUruguay });
         } catch (error) {
           console.error("Error en getLiveMatchesInUruguay:", error.message);

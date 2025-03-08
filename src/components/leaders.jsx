@@ -9,15 +9,11 @@ function Leaders({ leaders }) {
         <ul className="space-y-2 pt-2">
           {leaders.map((leader) =>
             leader.players.map((player) => {
-              // Obtener cantidad de goles
               const goals =
                 player.competitors?.[0]?.datapoints?.find(
                   (dp) => dp.type === "goals"
                 )?.value || 0;
-
-              // Obtener ID del equipo
               const teamId = player.competitors?.[0]?.id;
-
               return (
                 <li
                   key={player.id}

@@ -13,7 +13,7 @@ import {
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "next-themes";
 
-export const AcmeLogo = () => {
+export const Logo = () => {
   return (
     <svg
   className="h-8 w-8 mx-2 text-primary-500"
@@ -50,7 +50,7 @@ export default function App() {
           className="hidden"
         />
         <NavbarBrand>
-          <AcmeLogo />
+          <Logo />
           <p className="font-bold text-primary-500">Futbol UY</p>
         </NavbarBrand>
       </NavbarContent>

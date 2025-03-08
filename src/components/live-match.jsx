@@ -4,8 +4,6 @@ import Confetti from "react-confetti";
 import TeamLogo from "../components/team-logo.jsx";
 
 const LiveMatchCard = ({ match }) => {
-
-
   const homeTeam = match.sport_event.competitors[0].name;
   const awayTeam = match.sport_event.competitors[1].name;
 
@@ -78,7 +76,9 @@ const LiveMatchCard = ({ match }) => {
         {/* Equipo Local */}
         <div className="team-info flex flex-col items-center w-1/3">
           <TeamLogo teamId={match.sport_event.competitors[0].id} />
-          <span className="font-semibold text-foreground text-center">{homeTeam}</span>
+          <span className="font-semibold text-foreground text-center">
+            {homeTeam}
+          </span>
         </div>
 
         {/* Resultado en Vivo */}
@@ -103,22 +103,28 @@ const LiveMatchCard = ({ match }) => {
         {/* Equipo Visitante */}
         <div className="team-info flex flex-col items-center w-1/3">
           <TeamLogo teamId={match.sport_event.competitors[1].id} />
-          <span className="font-semibold text-foreground text-center">{awayTeam}</span>
+          <span className="font-semibold text-foreground text-center">
+            {awayTeam}
+          </span>
         </div>
       </div>
 
       {/* Estado del partido */}
       <p className="mt-2 text-xs text-white bg-red-500 px-2 py-1 rounded-md animate-pulse">
-        {isOngoing && `${match.sport_event_status.match_status === "halftime" ? "Medio tiempo" : "⚽ " + minutesPlayed + "’ -" + matchStatus }`}
-        </p>
+        {isOngoing &&
+          `${
+            match.sport_event_status.match_status === "halftime"
+              ? "Medio tiempo"
+              : "⚽ " + minutesPlayed + "’ -" + matchStatus
+          }`}
+      </p>
 
       {/* Estadio del partido */}
       <p className="pt-2 match-venue text-xs text-gray-400 text-center text-bold">
-        {isOngoing && `${venue}`}  
-        </p>
+        {isOngoing && `${venue}`}
+      </p>
     </div>
   );
 };
 
 export default LiveMatchCard;
-
