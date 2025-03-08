@@ -4,13 +4,15 @@ import Confetti from "react-confetti";
 import TeamLogo from "../components/team-logo.jsx";
 
 const LiveMatchCard = ({ match }) => {
-    
-  // Extraer los datos necesarios del objeto match
+
+
   const homeTeam = match.sport_event.competitors[0].name;
   const awayTeam = match.sport_event.competitors[1].name;
 
   const homeScore = match.sport_event_status.home_score;
   const awayScore = match.sport_event_status.away_score;
+
+  const venue = match.sport_event.venue.name;
 
   const [lastScores, setLastScores] = useState({
     home: homeScore,
@@ -28,7 +30,6 @@ const LiveMatchCard = ({ match }) => {
       setGoalScored("away");
     }
 
-    // Usamos un setTimeout para actualizar después de mostrar la animación
     setTimeout(() => {
       setLastScores({ home: homeScore, away: awayScore });
     }, 500);
@@ -43,8 +44,13 @@ const LiveMatchCard = ({ match }) => {
 
   const minutesPlayed = match.sport_event_status.clock.played.split(":")[0];
 
+  const firstHalf = match.sport_event_status.match_status === "1st_half";
+  const secondHalf = match.sport_event_status.match_status === "2nd_half";
+
+  const matchStatus = firstHalf ? " 1T" : secondHalf ? " 2T" : "";
+
   return (
-    <div className="relative box bg-background/50 rounded-xl p-4 flex flex-col items-center w-80 border-l-4 border-green-500">
+    <div className="relative box bg-background/50 rounded-xl p-4 w-80 flex flex-col items-center border-l-4 border-green-500">
       {/* Animación de Gol */}
       <AnimatePresence>
         {goalScored && (
@@ -70,7 +76,7 @@ const LiveMatchCard = ({ match }) => {
 
       <div className="flex justify-between w-full items-center mt-4">
         {/* Equipo Local */}
-        <div className="flex flex-col items-center flex-1">
+        <div className="team-info flex flex-col items-center w-1/3">
           <TeamLogo teamId={match.sport_event.competitors[0].id} />
           <span className="font-semibold text-foreground text-center">{homeTeam}</span>
         </div>
@@ -95,7 +101,7 @@ const LiveMatchCard = ({ match }) => {
         </div>
 
         {/* Equipo Visitante */}
-        <div className="flex flex-col items-center flex-1">
+        <div className="team-info flex flex-col items-center w-1/3">
           <TeamLogo teamId={match.sport_event.competitors[1].id} />
           <span className="font-semibold text-foreground text-center">{awayTeam}</span>
         </div>
@@ -103,11 +109,16 @@ const LiveMatchCard = ({ match }) => {
 
       {/* Estado del partido */}
       <p className="mt-2 text-xs text-white bg-red-500 px-2 py-1 rounded-md animate-pulse">
-        ⚽ {minutesPlayed}’
-        {isOngoing && ` - ${match.sport_event_status.status === "live" ? "En Vivo" : ""}`}
-      </p>
+        {isOngoing && `${match.sport_event_status.match_status === "halftime" ? "Medio tiempo" : "⚽ " + minutesPlayed + "’ -" + matchStatus }`}
+        </p>
+
+      {/* Estadio del partido */}
+      <p className="pt-2 match-venue text-xs text-gray-400 text-center text-bold">
+        {isOngoing && `${venue}`}  
+        </p>
     </div>
   );
 };
 
 export default LiveMatchCard;
+
