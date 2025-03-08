@@ -3,6 +3,7 @@ import TeamLogo from "./team-logo";
 
 function MatchCard({ match }) {
 
+
   const homeTeam = match.sport_event.competitors[0];
   const awayTeam = match.sport_event.competitors[1];
 
