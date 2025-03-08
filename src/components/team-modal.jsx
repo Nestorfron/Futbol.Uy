@@ -33,7 +33,6 @@ function TeamModal({ team }) {
     await actions.getTeamProfile(team.id);
     setTeamDetails(store.teamProfile);
     setIsLoading(false);
-    
   };
 
   return (
@@ -47,14 +46,19 @@ function TeamModal({ team }) {
         <TeamLogo teamId={team.id} />
       </Button>
 
-      <Modal isOpen={isOpen} backdrop="blur" onOpenChange={onOpenChange} className="bg-background/90">
+      <Modal
+        isOpen={isOpen}
+        backdrop="blur"
+        onOpenChange={onOpenChange}
+        className="bg-background/90"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-             <ModalHeader className="flex flex-col items-center gap-2">
-  <TeamLogo teamId={team.id} />
-  <h1 className="text-xl font-bold">{team.name}</h1>
-</ModalHeader>
+              <ModalHeader className="flex flex-col items-center gap-2">
+                <TeamLogo teamId={team.id} />
+                <h1 className="text-xl font-bold">{team.name}</h1>
+              </ModalHeader>
 
               <ModalBody>
                 {isLoading ? (
@@ -63,17 +67,38 @@ function TeamModal({ team }) {
                   </div>
                 ) : (
                   <div>
-                    <p><strong>Estadio:</strong> {teamDetails?.venue?.name} ({teamDetails?.venue?.city_name}, {teamDetails?.venue?.country_name})</p>
-                    <p><strong>Capacidad del Estadio:</strong> {teamDetails?.venue?.capacity}</p>
-                    <p><strong>D.T.:</strong> {teamDetails?.manager?.name} ({teamDetails?.manager?.nationality})</p>
-                    <p><strong>Jugadores:</strong></p>
-                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    <p>
+                      <strong>Estadio:</strong> {teamDetails?.venue?.name} (
+                      {teamDetails?.venue?.city_name},{" "}
+                      {teamDetails?.venue?.country_name})
+                    </p>
+                    <p>
+                      <strong>Capacidad del Estadio:</strong>{" "}
+                      {teamDetails?.venue?.capacity}
+                    </p>
+                    <p>
+                      <strong>D.T.:</strong> {teamDetails?.manager?.name} (
+                      {teamDetails?.manager?.nationality})
+                    </p>
+                    <p>
+                      <strong>Jugadores:</strong>
+                    </p>
+                    <div style={{ maxHeight: "300px", overflowY: "auto" }}>
                       <ul>
                         {teamDetails?.players?.map((player, index) => (
                           <li key={index} className="my-2">
-                            <p><strong>{player?.name}</strong> - {positionMap[player?.type] || player?.type}</p>
-                            <p><strong>Número:</strong> {player?.jersey_number}</p>
-                            <p><strong>Edad:</strong> {new Date().getFullYear() - new Date(player?.date_of_birth).getFullYear()}</p>
+                            <p>
+                              <strong>{player?.name}</strong> -{" "}
+                              {positionMap[player?.type] || player?.type}
+                            </p>
+                            <p>
+                              <strong>Número:</strong> {player?.jersey_number}
+                            </p>
+                            <p>
+                              <strong>Edad:</strong>{" "}
+                              {new Date().getFullYear() -
+                                new Date(player?.date_of_birth).getFullYear()}
+                            </p>
                           </li>
                         ))}
                       </ul>

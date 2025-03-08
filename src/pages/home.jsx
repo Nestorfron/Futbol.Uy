@@ -7,6 +7,8 @@ import TeamCard from "../components/team-card.jsx";
 import MatchCard from "../components/match-card.jsx";
 import StandingsTable from "../components/standings-table.jsx";
 import Leaders from "../components/leaders.jsx";
+import Footer from "../components/footer.jsx";
+import Calendar from "../assets/calendar.jsx";
 
 function Home() {
   const { store, actions } = useContext(Context);
@@ -17,8 +19,6 @@ function Home() {
     actions.getTeams();
     actions.getStandingsTable();
     actions.getLeaders();
-    
-
 
     const interval = setInterval(() => {
       if (store.liveMatches.length > 0) {
@@ -43,8 +43,12 @@ function Home() {
     }, {});
   };
 
-  const groupedUpcomingMatches = groupMatchesByRound(store.upcomingMatches || []);
-  const groupedFinishedMatches = groupMatchesByRound(store.finishedMatches || []);
+  const groupedUpcomingMatches = groupMatchesByRound(
+    store.upcomingMatches || []
+  );
+  const groupedFinishedMatches = groupMatchesByRound(
+    store.finishedMatches || []
+  );
   const reversedGroupedFinishedMatches = Object.entries(groupedFinishedMatches)
     .reverse()
     .reduce((acc, [round, matches]) => {
@@ -73,9 +77,12 @@ function Home() {
                     <LiveMatchCardUruguay key={index} match={match} />
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center w-full">
-                    No hay partidos en vivo en este momento.
-                  </p>
+                  <div className="justify-center items-center m-auto">
+                    <Calendar />
+                    <p className="pt-2 text-gray-500 text-center w-full">
+                      No hay partidos en vivo en este momento.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -195,6 +202,7 @@ function Home() {
           <AdSpace position="bottom" />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

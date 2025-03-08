@@ -3,7 +3,6 @@ import getState from "./flux.jsx";
 
 export const Context = React.createContext(null);
 
-
 const injectContext = (PassedComponent) => {
   const StoreWrapper = (props) => {
     const [state, setState] = useState(
@@ -18,10 +17,7 @@ const injectContext = (PassedComponent) => {
       })
     );
 
-    useEffect(() => {
-
-    }, []);
-
+    useEffect(() => {}, []);
 
     return (
       <Context.Provider value={state}>
