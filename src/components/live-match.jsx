@@ -66,6 +66,7 @@ const LiveMatchCard = ({ match, incidents }) => {
     shot_off_target: "Tiro fuera de meta",
     match_started: "Partido iniciado",
     period_start: "Inicio de período",
+    shot_on_target: "Tiro a meta",
   };
 
   // Extraemos las últimas incidencias
