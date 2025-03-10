@@ -8,6 +8,8 @@ const getState = ({ getStore, getActions, setStore }) => {
       standings2: [],
       leaders: [],
       teamProfile: [],
+      sportEventTimeline: [],
+      eventId: null,
       API_KEY: import.meta.env.VITE_API_KEY2,
       API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
       PROXY_URL: "https://corsproxy.io/?",
@@ -142,6 +144,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       },
       getLiveMatchesInUruguay: async () => {
         const store = getStore();
+        const action = getActions();
         const URL = `${store.API_URL}schedules/live/schedules.json?api_key=${store.API_KEY}`;
         try {
           const response = await fetch(store.PROXY_URL + URL, {
@@ -170,10 +173,30 @@ const getState = ({ getStore, getActions, setStore }) => {
           });
           if (partidosEnUruguay.length === 0) {
             setStore({ liveMatches: [] });
+          } else {
+            setStore({ liveMatches: partidosEnUruguay });
+            // Obtener el evento
+            action.getSportEventTimeline(partidosEnUruguay[0].sport_event.id);
           }
-          setStore({ liveMatches: partidosEnUruguay });
         } catch (error) {
           console.error("Error en getLiveMatchesInUruguay:", error.message);
+        }
+      },
+      getSportEventTimeline: async (id) => {
+        const store = getStore();
+        const URL = `${store.API_URL}sport_events/${id}/timeline.json?api_key=${store.API_KEY}`;
+        try {
+          const response = await fetch(store.PROXY_URL + URL, {
+            headers: {
+              accept: "application/json",
+            },
+          });
+          if (!response.ok) throw new Error("Error al obtener el evento");
+
+          const data = await response.json();
+          setStore({ sportEventTimeline: data.timeline });
+        } catch (error) {
+          console.error("Error en getSportEventTimeline:", error);
         }
       },
     },
