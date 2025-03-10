@@ -17,9 +17,8 @@ function Home() {
     const interval = setInterval(() => {
       if (store.liveMatches.length > 0) {
         actions.getLiveMatchesInUruguay();
-        store.eventId && actions.getSportEventTimeline();
       }
-    }, 60000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);

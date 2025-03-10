@@ -9,7 +9,6 @@ const getState = ({ getStore, getActions, setStore }) => {
       leaders: [],
       teamProfile: [],
       sportEventTimeline: [],
-      eventId: null,
       API_KEY: import.meta.env.VITE_API_KEY2,
       API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
       PROXY_URL: "https://corsproxy.io/?",
