@@ -17,7 +17,13 @@ const injectContext = (PassedComponent) => {
       })
     );
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+      state.actions.getLiveMatchesInUruguay();
+      state.actions.getAllMatches();
+      state.actions.getTeams();
+      state.actions.getStandingsTable();
+      state.actions.getLeaders();
+    }, []);
 
     return (
       <Context.Provider value={state}>
