@@ -4,6 +4,7 @@ import TeamLogo from "./team-logo";
 function MatchCard({ match }) {
 
 
+
   const homeTeam = match.sport_event.competitors[0];
   const awayTeam = match.sport_event.competitors[1];
 
@@ -13,9 +14,7 @@ function MatchCard({ match }) {
   const formattedStartTime = new Date(match.sport_event.start_time).toLocaleString();
 
   return (
-    <div className="box bg-background/80 rounded-xl p-4 flex flex-col items-center w-64 h-72 border-l-4 border-primary-500 backdrop-blur-md">
-    
-    
+    <div className="m-auto box bg-background/80 rounded-xl p-4 flex flex-col items-center w-64 h-72 border-l-4 border-primary-500 backdrop-blur-md">
       <div className="match-info flex justify-between items-center w-full my-4 flex-grow">
         {/* Equipo Local */}
         <div className="team-info flex flex-col items-center w-1/3">

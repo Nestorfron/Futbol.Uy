@@ -14,6 +14,7 @@ function Home() {
   const { store, actions } = useContext(Context);
 
   useEffect(() => {
+    actions.getLiveMatchesInUruguay();
     const interval = setInterval(() => {
       if (store.liveMatches.length > 0) {
         actions.getLiveMatchesInUruguay();
@@ -37,18 +38,6 @@ function Home() {
     }, {});
   };
 
-  const groupedUpcomingMatches = groupMatchesByRound(
-    store.upcomingMatches || []
-  );
-  const groupedFinishedMatches = groupMatchesByRound(
-    store.finishedMatches || []
-  );
-  const reversedGroupedFinishedMatches = Object.entries(groupedFinishedMatches)
-    .reverse()
-    .reduce((acc, [round, matches]) => {
-      acc[round] = matches;
-      return acc;
-    }, {});
 
   return (
     <div className="min-h-screen bg-background">
@@ -86,60 +75,44 @@ function Home() {
             </div>
 
             {/* Próximos partidos */}
-            <div className="max-w-4xl mx-auto p-4 mt-8 shadow-xl border-t-4 border-primary-500 px-2 pb-2">
-              <h1 className="text-2xl font-bold text-center mb-4">
-                Próximos encuentros
-              </h1>
-              <div className="box-section overflow-y-auto space-y-2">
-                {Object.entries(groupedUpcomingMatches).length > 0 ? (
-                  Object.entries(groupedUpcomingMatches).map(
-                    ([round, matches]) => (
-                      <div key={round} className="mb-6">
-                        <h2 className="text-xl font-semibold text-center mb-2">
-                          {round}
-                        </h2>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-                          {matches.map((match, index) => (
-                            <MatchCard key={index} match={match} />
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  )
-                ) : (
-                  <div className="text-gray-500 text-center">
-                    <Spinner size="lg" />
-                  </div>
-                )}
+            <div className="max-w-5xl mx-auto mt-6 sm:mt-8 shadow-xl border-t-4 border-primary-500 rounded-xl bg-white dark:bg-neutral-900">
+              <div className="p-3 sm:p-5">
+                <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
+                  Próximos encuentros
+                </h1>
+
+                <div className="flex flex-wrap gap-4 justify-center max-h-[420px] sm:max-h-[500px] overflow-y-auto pr-1 pt-2">
+                  {store.upcomingMatches.length > 0 ? (
+                    store.upcomingMatches.map((match, index) => (
+                      <MatchCard key={index} match={match} />
+                    ))
+                  ) : (
+                    <div className="flex justify-center py-6 text-gray-500">
+                      <Spinner size="lg" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Partidos Finalizados */}
-            <div className="max-w-4xl mx-auto p-4 mt-8 shadow-xl border-t-4 border-primary-500 px-2 pb-2">
-              <h1 className="text-2xl font-bold text-center mb-4">
-                Resultados anteriores
-              </h1>
-              <div className="box-section overflow-y-auto space-y-2">
-                {Object.entries(reversedGroupedFinishedMatches).length > 0 ? (
-                  Object.entries(reversedGroupedFinishedMatches).map(
-                    ([round, matches]) => (
-                      <div key={round} className="mb-6">
-                        <h2 className="text-xl font-semibold text-center mb-2">
-                          {round}
-                        </h2>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-                          {matches.map((match, index) => (
-                            <MatchCard key={index} match={match} />
-                          ))}
-                        </div>
-                      </div>
-                    )
-                  )
-                ) : (
-                  <div className="text-gray-500 text-center">
-                    <Spinner size="lg" />
-                  </div>
-                )}
+            <div className="max-w-5xl mx-auto mt-6 sm:mt-8 shadow-xl border-t-4 border-primary-500 rounded-xl bg-white dark:bg-neutral-900">
+              <div className="p-3 sm:p-5">
+                <h1 className="text-xl sm:text-2xl font-bold text-center mb-3 sm:mb-4">
+                  Resultados anteriores
+                </h1>
+
+                <div className="flex flex-wrap gap-4 justify-center max-h-[420px] sm:max-h-[500px] overflow-y-auto pr-1 pt-2">
+                  {store.finishedMatches.length > 0 ? (
+                    store.finishedMatches.map((match, index) => (
+                      <MatchCard key={index} match={match} />
+                    ))
+                  ) : (
+                    <div className="flex justify-center py-6 text-gray-500">
+                      <Spinner size="lg" />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

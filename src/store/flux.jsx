@@ -1,201 +1,227 @@
 const getState = ({ getStore, getActions, setStore }) => {
+
+  const fetchAPI = async (url) => {
+    const store = getStore();
+    const response = await fetch(store.PROXY_URL + url, {
+      headers: { accept: "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return await response.json();
+  };
+
+
   return {
     store: {
+      API_KEY: import.meta.env.VITE_API_KEY2,
+      API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
+      PROXY_URL: "https://corsproxy.io/?",
       liveMatches: [],
       finishedMatches: [],
       upcomingMatches: [],
       teams: [],
-      standings2: [],
+      standings: [],
       leaders: [],
-      teamProfile: [],
+      teamProfile: null,
       sportEventTimeline: [],
-      API_KEY: import.meta.env.VITE_API_KEY2,
-      API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
-      PROXY_URL: "https://corsproxy.io/?",
-      SEASSON_ID: "sr:season:128225",
+      initial_season_id: null,
+      seasons: [],
     },
+
     actions: {
+
+      getSeasons: async () => {
+        const store = getStore();
+        try {
+          const url = `${store.API_URL}competitions/sr:competition:278/seasons.json?api_key=${store.API_KEY}`;
+          const data = await fetchAPI(url);
+          const seasonId = data.seasons.at(-1)?.id;
+          setStore({
+            SEASONS: data.seasons,
+            INITIAL_SEASON_ID: seasonId,
+          });
+          return data.seasons.at(-1)?.id;
+        } catch (error) {
+          console.error("getSeasons:", error);
+          return null;
+        }
+      },
+
       getTeams: async () => {
         const store = getStore();
-        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/competitors.json?api_key=${store.API_KEY}`;
+        const actions = getActions();
+        if (!store.initial_season_id) {
+          store.initial_season_id = await actions.getSeasons();
+        }
         try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
+          const url = `${store.API_URL}seasons/${store.initial_season_id}/competitors.json?api_key=${store.API_KEY}&limit=100`;
+          const data = await fetchAPI(url);
+          setStore({
+            teams: data.season_competitors || [],
           });
-          if (!response.ok) throw new Error("Error al obtener los equipos");
-
-          const data = await response.json();
-          setStore({ teams: data.season_competitors });
         } catch (error) {
-          console.error("Error en getTeams:", error);
+          console.error("getTeams:", error);
         }
       },
+
       getTeamProfile: async (teamId) => {
         const store = getStore();
-        const URL = `${store.API_URL}competitors/${teamId}/profile.json?api_key=${store.API_KEY}`;
         try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
+          const url = `${store.API_URL}competitors/${teamId}/profile.json?api_key=${store.API_KEY}`;
+          const data = await fetchAPI(url);
+          setStore({
+            teamProfile: data,
           });
-          if (!response.ok)
-            throw new Error("Error al obtener el perfil del equipo");
-
-          const data = await response.json();
-          setStore({ teamProfile: data });
         } catch (error) {
-          console.error("Error en getTeamProfile:", error);
+          console.error("getTeamProfile:", error);
         }
       },
+
       getAllMatches: async () => {
         const store = getStore();
-        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/summaries.json?api_key=${store.API_KEY}`;
+        const actions = getActions();
+      
         try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
+          let seasonId = store.initial_season_id;
+      
+          if (!seasonId) {
+            seasonId = await actions.getSeasons();
+            if (!seasonId) return;
+      
+            setStore({ initial_season_id: seasonId });
+          }
+      
+          const url = `${store.API_URL}seasons/${seasonId}/summaries.json?api_key=${store.API_KEY}`;
+      
+          const response = await fetch(store.PROXY_URL + url, {
+            headers: { accept: "application/json" },
           });
-
+      
           if (!response.ok) {
             throw new Error("Error al obtener los partidos");
           }
+      
           const data = await response.json();
-          if (data.summaries && Array.isArray(data.summaries)) {
-            const finishedMatches = data.summaries.filter(
-              (event) =>
-                event.sport_event_status?.match_status === "ended" ||
-                event.sport_event_status?.status === "closed"
-            );
-            const upcomingMatches = data.summaries.filter(
-              (event) =>
-                event.sport_event_status?.match_status === "not_started" ||
-                event.sport_event_status?.status === "not_started"
-            );
-            setStore({
-              finishedMatches: finishedMatches,
-              upcomingMatches: upcomingMatches,
-            });
-          } else {
-            console.error(
-              "No se encontraron partidos en la respuesta de la API."
-            );
-          }
+          const summaries = data?.summaries ?? [];
+      
+          const finishedMatches = [];
+          const upcomingMatches = [];
+          const liveMatches = [];
+      
+          summaries.forEach((event) => {
+            const status = event?.sport_event_status?.match_status;
+            const generalStatus = event?.sport_event_status?.status;
+      
+            if (status === "live") {
+              liveMatches.push(event);
+            } else if (status === "ended" || generalStatus === "closed") {
+              finishedMatches.push(event);
+            } else if (status === "not_started" || generalStatus === "not_started") {
+              upcomingMatches.push(event);
+            }
+          });
+      
+          setStore({
+            finishedMatches,
+            upcomingMatches,
+            liveMatches,
+          });
+      
+      
         } catch (error) {
-          console.error("Error en getFinishedMatches:", error);
+          console.error("Error en getAllMatches:", error);
         }
       },
+
       getStandingsTable: async () => {
         const store = getStore();
-        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/form_standings.json?api_key=${store.API_KEY}`;
+        const actions = getActions();
+        if (!store.initial_season_id) {
+          store.initial_season_id = await actions.getSeasons();
+        }
         try {
+          const URL = `${store.API_URL}seasons/${store.initial_season_id}/standings.json?api_key=${store.API_KEY}`;
           const response = await fetch(store.PROXY_URL + URL, {
             headers: { accept: "application/json" },
           });
-
           if (!response.ok)
             throw new Error("Error al obtener la tabla de posiciones");
-
           const data = await response.json();
           setStore({
-            standings2: data.season_form_standings[0].groups[0].form_standings,
+            standings2: data.standings[0].groups[0].standings,
           });
         } catch (error) {
           console.error("Error en getStandingsTable:", error);
         }
       },
-      getPlayers: async () => {
-        const store = getStore();
-        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/lineups.json?api_key=${store.API_KEY}`;
-        try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
-          });
-          if (!response.ok) throw new Error("Error al obtener los jugadores");
 
-          const data = await response.json();
-          console.log(data.lineups);
-        } catch (error) {
-          console.error("Error en getPlayers:", error);
-        }
-      },
-      getLeaders: async () => {
-        const store = getStore();
-        const URL = `${store.API_URL}seasons/${store.SEASSON_ID}/leaders.json?api_key=${store.API_KEY}`;
-        try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
-          });
-          if (!response.ok) throw new Error("Error al obtener los líderes");
 
-          const data = await response.json();
-          setStore({ leaders: data.lists[1].leaders });
-        } catch (error) {
-          console.error("Error en getLeaders:", error);
-        }
-      },
       getLiveMatchesInUruguay: async () => {
         const store = getStore();
-        const action = getActions();
-        const URL = `${store.API_URL}schedules/live/schedules.json?api_key=${store.API_KEY}`;
-        try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
-          });
-          if (!response.ok) {
-            throw new Error("Error al obtener los partidos");
-          }
-          const data = await response.json();
-          if (!data.schedules || !Array.isArray(data.schedules)) {
-            throw new Error("No se encontraron partidos en vivo.");
-          }
-          const partidosEnUruguay = data.schedules.filter((partido) => {
-            const categoria = partido.sport_event.sport_event_context?.category;
-            const status = partido.sport_event_status?.status;
-            const seasonIdFromResponse =
-              partido.sport_event.sport_event_context?.season?.id;
+        const actions = getActions();
 
+        if (!store.initial_season_id) {
+          store.initial_season_id = await actions.getSeasons();
+        }
+
+
+        try {
+          const url = `${store.API_URL}schedules/live/schedules.json?api_key=${store.API_KEY}`;
+          const data = await fetchAPI(url);
+          const partidos = data.schedules?.filter((p) => {
+            const category = p.sport_event.sport_event_context?.category;
+            const status = p.sport_event_status?.status;
+            const seasonId = p.sport_event.sport_event_context?.season?.id;
             return (
-              categoria?.country_code === "URY" &&
+              category?.country_code === "URY" &&
               status === "live" &&
-              seasonIdFromResponse === "sr:season:128225"
+              seasonId === store.initial_season_id
             );
           });
-          if (partidosEnUruguay.length === 0) {
-            setStore({ liveMatches: [] });
-          } else {
-            setStore({ liveMatches: partidosEnUruguay });
-            // Obtener el evento
-            action.getSportEventTimeline(partidosEnUruguay[0].sport_event.id);
+          setStore({
+            liveMatches: partidos || [],
+          });
+          console.log(partidos);
+          if (partidos?.length > 0) {
+            actions.getSportEventTimeline(partidos[0].sport_event.id);
           }
         } catch (error) {
-          console.error("Error en getLiveMatchesInUruguay:", error.message);
+          console.error("getLiveMatchesInUruguay:", error);
         }
       },
-      getSportEventTimeline: async (id) => {
-        const store = getStore();
-        const URL = `${store.API_URL}sport_events/${id}/timeline.json?api_key=${store.API_KEY}`;
-        try {
-          const response = await fetch(store.PROXY_URL + URL, {
-            headers: {
-              accept: "application/json",
-            },
-          });
-          if (!response.ok) throw new Error("Error al obtener el evento");
 
-          const data = await response.json();
-          setStore({ sportEventTimeline: data.timeline });
+      getSportEventTimeline: async (eventId) => {
+        const store = getStore();
+        try {
+          const url = `${store.API_URL}sport_events/${eventId}/timeline.json?api_key=${store.API_KEY}`;
+          const data = await fetchAPI(url);
+
+          setStore({
+            sportEventTimeline: data.timeline || [],
+          });
         } catch (error) {
-          console.error("Error en getSportEventTimeline:", error);
+          console.error("getSportEventTimeline:", error);
+        }
+      },
+
+      
+
+      getLeaders: async () => {
+        const store = getStore();
+        const actions = getActions();
+        if (!store.initial_season_id) {
+          store.initial_season_id = await actions.getSeasons();
+        }
+        try {
+          const url = `${store.API_URL}seasons/${store.initial_season_id}/leaders.json?api_key=${store.API_KEY}`;
+          const data = await fetchAPI(url);
+          console.log(data);
+          setStore({
+            leaders: data?.lists?.[1]?.leaders || [],
+          });
+        } catch (error) {
+          console.error("getLeaders:", error);
         }
       },
     },
