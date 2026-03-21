@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
   return {
     store: {
-      API_KEY: import.meta.env.VITE_API_KEY2,
+      API_KEY: import.meta.env.VITE_API_KEY,
       API_URL: "https://api.sportradar.com/soccer/trial/v4/en/",
       PROXY_URL: "https://corsproxy.io/?",
       liveMatches: [],
@@ -52,6 +52,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       getTeams: async () => {
         const store = getStore();
+        console.log(store.API_KEY);
         try {
           const url = `${store.API_URL}seasons/${store.initial_season_id}/competitors.json?api_key=${store.API_KEY}&limit=100`;
           const data = await fetchAPI(url);
