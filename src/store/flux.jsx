@@ -25,7 +25,7 @@ const getState = ({ getStore, getActions, setStore }) => {
       leaders: [],
       teamProfile: null,
       sportEventTimeline: [],
-      initial_season_id: null,
+      initial_season_id: null || "sr:season:139306",
       seasons: [],
     },
 
@@ -38,9 +38,11 @@ const getState = ({ getStore, getActions, setStore }) => {
           const data = await fetchAPI(url);
           const seasonId = data.seasons.at(-1)?.id;
           setStore({
-            SEASONS: data.seasons,
-            INITIAL_SEASON_ID: seasonId,
+            seasons: data.seasons,
+            initial_season_id: seasonId,
           });
+          console.log(data.seasons);
+          console.log(data.seasons.at(-1)?.id);
           return data.seasons.at(-1)?.id;
         } catch (error) {
           console.error("getSeasons:", error);
@@ -50,15 +52,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       getTeams: async () => {
         const store = getStore();
-        const actions = getActions();
-        if (!store.initial_season_id) {
-          store.initial_season_id = await actions.getSeasons();
-        }
         try {
           const url = `${store.API_URL}seasons/${store.initial_season_id}/competitors.json?api_key=${store.API_KEY}&limit=100`;
           const data = await fetchAPI(url);
           setStore({
-            teams: data.season_competitors || [],
+            teams: data.season_competitors,
           });
         } catch (error) {
           console.error("getTeams:", error);
@@ -78,21 +76,13 @@ const getState = ({ getStore, getActions, setStore }) => {
         }
       },
 
+
       getAllMatches: async () => {
         const store = getStore();
-        const actions = getActions();
+        const seasonId = store.initial_season_id;
       
-        try {
-          let seasonId = store.initial_season_id;
-      
-          if (!seasonId) {
-            seasonId = await actions.getSeasons();
-            if (!seasonId) return;
-      
-            setStore({ initial_season_id: seasonId });
-          }
-      
-          const url = `${store.API_URL}seasons/${seasonId}/summaries.json?api_key=${store.API_KEY}`;
+        try {   
+          const url = `${store.API_URL}seasons/${seasonId}/schedules.json?api_key=${store.API_KEY}`;
       
           const response = await fetch(store.PROXY_URL + url, {
             headers: { accept: "application/json" },
@@ -103,31 +93,29 @@ const getState = ({ getStore, getActions, setStore }) => {
           }
       
           const data = await response.json();
-          const summaries = data?.summaries ?? [];
-      
+          const schedules = data?.schedules;
+
           const finishedMatches = [];
           const upcomingMatches = [];
           const liveMatches = [];
-      
-          summaries.forEach((event) => {
-            const status = event?.sport_event_status?.match_status;
-            const generalStatus = event?.sport_event_status?.status;
-      
+
+          schedules.forEach((event) => {
+            const status = event?.sport_event_status?.status;
+            const generalStatus = event?.sport_event_status?.match_status;
             if (status === "live") {
               liveMatches.push(event);
-            } else if (status === "ended" || generalStatus === "closed") {
+            } else if (status === "closed" || generalStatus === "ended") {
               finishedMatches.push(event);
             } else if (status === "not_started" || generalStatus === "not_started") {
               upcomingMatches.push(event);
             }
           });
-      
+
           setStore({
             finishedMatches,
             upcomingMatches,
             liveMatches,
           });
-      
       
         } catch (error) {
           console.error("Error en getAllMatches:", error);
@@ -136,12 +124,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
       getStandingsTable: async () => {
         const store = getStore();
-        const actions = getActions();
-        if (!store.initial_season_id) {
-          store.initial_season_id = await actions.getSeasons();
-        }
         try {
-          const URL = `${store.API_URL}seasons/${store.initial_season_id}/standings.json?api_key=${store.API_KEY}`;
+          const URL = `${store.API_URL}seasons/${store.initial_season_id}/form_standings.json?api_key=${store.API_KEY}`;
           const response = await fetch(store.PROXY_URL + URL, {
             headers: { accept: "application/json" },
           });
@@ -149,7 +133,7 @@ const getState = ({ getStore, getActions, setStore }) => {
             throw new Error("Error al obtener la tabla de posiciones");
           const data = await response.json();
           setStore({
-            standings2: data.standings[0].groups[0].standings,
+            standings2: data.season_form_standings[0].groups[0].form_standings,
           });
         } catch (error) {
           console.error("Error en getStandingsTable:", error);
@@ -182,7 +166,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({
             liveMatches: partidos || [],
           });
-          console.log(partidos);
           if (partidos?.length > 0) {
             actions.getSportEventTimeline(partidos[0].sport_event.id);
           }
@@ -216,7 +199,6 @@ const getState = ({ getStore, getActions, setStore }) => {
         try {
           const url = `${store.API_URL}seasons/${store.initial_season_id}/leaders.json?api_key=${store.API_KEY}`;
           const data = await fetchAPI(url);
-          console.log(data);
           setStore({
             leaders: data?.lists?.[1]?.leaders || [],
           });

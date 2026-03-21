@@ -18,11 +18,10 @@ const injectContext = (PassedComponent) => {
     );
 
     useEffect(() => {
-      state.actions.getLiveMatchesInUruguay();
-      state.actions.getAllMatches();
       state.actions.getTeams();
-      state.actions.getStandingsTable();
       state.actions.getLeaders();
+      state.actions.getStandingsTable();
+      state.actions.getAllMatches();
     }, []);
 
     return (
